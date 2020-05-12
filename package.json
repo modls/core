@@ -1,7 +1,7 @@
 {
   "name": "base-webcomponent",
   "description": "Base Component for WebComponents",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "component.js",
   "repositories": [
     {
