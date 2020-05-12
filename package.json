@@ -1,5 +1,5 @@
 {
-  "name": "basecomponent",
+  "name": "base-webcomponent",
   "description": "Base Component for WebComponents",
   "version": "0.0.3",
   "main": "component.js",
