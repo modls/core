@@ -1,0 +1,12 @@
+{
+  "name": "BaseComponent",
+  "description": "Base Component for WebComponents",
+  "version": "0.0.1",
+  "main": "component.js",
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/DominicVonk/BaseComponent.git"
+    }
+  ]
+}
