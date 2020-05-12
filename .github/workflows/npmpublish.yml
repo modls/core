@@ -6,10 +6,13 @@ name: Node.js Package
 on:
   release:
     types: [created]
-
+  watch:
+    types: [started]
+    
 jobs:
   publish-npm:
     runs-on: ubuntu-latest
+    if: github.actor == github.event.repository.owner.login
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -22,6 +25,7 @@ jobs:
 
   publish-gpr:
     runs-on: ubuntu-latest
+    if: github.actor == github.event.repository.owner.login
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
