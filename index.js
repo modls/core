@@ -64,12 +64,26 @@ class BaseWebComponent extends HTMLElement {
   _props = {};
   constructor(props, state) {
     super();
-    this._shadowRoot = this.attachShadow({ mode: "open" });
-    this.render = render.bind(null, this._shadowRoot, this.render.bind(this));
+    if (this.constructor.disableShadowDOM) {
+      this.render = render.bind(null, this, this.render.bind(this));
+    } else {
+      this._shadowRoot = this.attachShadow({ mode: "open" });
+      this.render = render.bind(null, this._shadowRoot, this.render.bind(this));
+    }
     this._setProps({ ...this.constructor.props });
     if (props) {
       this._setProps({ ...props });
     }
+    this.getAttributeNames().forEach((attrName) => {
+      for (var name in this.props) {
+        if (this.props.hasOwnProperty(name)) {
+          if (attrName.toLowerCase() == name.toLowerCase()) {
+            this._setProps({ [name]: this.getAttribute(attrName) });
+            break;
+          }
+        }
+      }
+    });
     if (state) {
       this.setState({ ...state });
     }
@@ -111,15 +125,18 @@ class BaseWebComponent extends HTMLElement {
   }
   _setProps(obj) {
     for (var objName in obj) {
-      var name = Object.keys(this.constructor.props).find(
+      let name = Object.keys(this.constructor.props).find(
         (_name) => _name.toLowerCase() === objName.toLowerCase()
       );
       if (!name) {
         continue;
       }
       if (obj.hasOwnProperty(objName) && name in this.constructor.props) {
-        var currentValue = this.props[name];
-        var value = obj[objName];
+        let currentValue =
+          typeof this.props[name] === "undefined"
+            ? this.constructor.props[name]
+            : this.props[name];
+        let value = obj[objName];
         if (typeof currentValue === "number" && typeof value === "string") {
           value = parseFloat(value);
         } else if (
