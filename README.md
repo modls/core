@@ -1,3 +1,5 @@
+![Node.js Package](https://github.com/DominicVonk/BaseWebComponent/workflows/Node.js%20Package/badge.svg)
+
 # Base WebComponent
 
 ## How To Use BaseWebComponent
