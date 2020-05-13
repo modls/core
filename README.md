@@ -11,9 +11,7 @@ import BaseWebComponent, { html } from "base-webcomponent";
 Alternatively you can use a CDN such as unpkg:
 
 ```js
-import BaseWebComponent, {
-  html,
-} from "https://unpkg.com/base-webcomponent?module";
+import BaseWebComponent, { html } from "https://unpkg.com/base-webcomponent";
 ```
 
 ## Example
