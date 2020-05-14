@@ -41,27 +41,27 @@ class BaseWebComponent extends HTMLElement {
     }
   }
   addEventListener(name, func) {
-    var events = [...this._events];
+    var events = { ...this._events };
     name = name.toLowerCase();
-    if (name in events) {
+    if (!(name in events)) {
       events[name] = [];
     }
     events[name].push(func.bind(this));
     this._setEvent({ [name]: [...events[name]] });
   }
   removeEventListener(name) {
-    var events = [...this._events];
+    var events = { ...this._events };
     name = name.toLowerCase();
     if (name in events) {
       this._setEvent({ [name]: [] });
     }
   }
-  trigger(name, data) {
-    var events = [...this._events];
+  trigger(name, ...data) {
+    var events = { ...this._events };
     name = name.toLowerCase();
     if (name in events) {
       for (var i = 0; i < events[name].length; i++) {
-        events[name][i](data);
+        events[name][i](...data);
       }
     }
   }

@@ -1,7 +1,7 @@
 {
   "name": "base-webcomponent",
   "description": "Base WebComponents",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "main": "index.js",
   "unpkg": "dist/index.js",
   "repositories": [
