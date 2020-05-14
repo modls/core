@@ -84,29 +84,28 @@ class BaseWebComponent extends HTMLElement {
       if (!name) {
         continue;
       }
-      if (
-        obj.hasOwnProperty(objName) &&
-        name in this.constructor.props &&
-        fromAttr
-      ) {
+      if (obj.hasOwnProperty(objName) && name in this.constructor.props) {
         let currentValue =
           typeof this.props[name] === "undefined"
             ? this.constructor.props[name]
             : this.props[name];
         let value = obj[objName];
-        if (typeof currentValue === "number" && typeof value === "string") {
-          value = parseFloat(value);
-        } else if (
-          (typeof currentValue === "array" ||
-            typeof currentValue === "object") &&
-          typeof value === "string"
-        ) {
-          value = JSON.parse(value);
-        } else if (
-          typeof currentValue === "boolean" &&
-          typeof value === "string"
-        ) {
-          value = currentValue.toLowerCase() === "true" || currentValue === "1";
+        if (fromAttr) {
+          if (typeof currentValue === "number" && typeof value === "string") {
+            value = parseFloat(value);
+          } else if (
+            (typeof currentValue === "array" ||
+              typeof currentValue === "object") &&
+            typeof value === "string"
+          ) {
+            value = JSON.parse(value);
+          } else if (
+            typeof currentValue === "boolean" &&
+            typeof value === "string"
+          ) {
+            value =
+              currentValue.toLowerCase() === "true" || currentValue === "1";
+          }
         }
         this._props[name] = value;
       }
