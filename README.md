@@ -25,9 +25,9 @@ export default class ExampleClass extends BaseWebComponent {
   static get props() {
     return { startFrom: 0 };
   }
-  state = {
-    number: 0,
-  };
+  static get state() {
+    return { number: 0 };
+  }
   onMount() {
     console.log("Mounted");
     this.setState({ number: this.props.startFrom });
@@ -60,4 +60,4 @@ window.customElements.define("x-exampleclass", ExampleClass);
 
 ### Thanks to
 
-Rendering methods of [µhtml](https://www.npmjs.com/package/uhtml)
+Rendering methods of [lighterhtml](https://www.npmjs.com/package/lighterhtml)

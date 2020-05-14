@@ -1,7 +1,7 @@
 {
   "name": "base-webcomponent",
   "description": "Base WebComponents",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "main": "index.js",
   "unpkg": "dist/index.js",
   "repositories": [
@@ -22,7 +22,7 @@
     "component"
   ],
   "dependencies": {
-    "uhtml": "^1.11.6"
+    "lighterhtml": "^3.1.3"
   },
   "license": "ISC",
   "bugs": {

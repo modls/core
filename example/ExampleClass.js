@@ -4,9 +4,11 @@ export default class ExampleClass extends BaseWebComponent {
   static get props() {
     return { startFrom: 0 };
   }
-  state = {
-    number: 0,
-  };
+  static get state() {
+    return {
+      number: 0,
+    };
+  }
   onMount() {
     console.log("Mounted");
     this.setState({ number: this.props.startFrom });

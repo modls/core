@@ -1,37 +1,5 @@
-import { svg, html, render } from "uhtml";
+import { svg, html, render } from "lighterhtml";
 
-const unfreeze = (o) => {
-  var oo = undefined;
-  if (o instanceof Array) {
-    oo = [];
-    var clone = function (v) {
-      oo.push(v);
-    };
-    o.forEach(clone);
-  } else if (o instanceof String) {
-    oo = new String(o).toString();
-  } else if (typeof o == "object") {
-    oo = {};
-    for (var property in o) {
-      oo[property] = o[property];
-    }
-  }
-  return oo;
-};
-
-const deepUnfreeze = (object) => {
-  var obj = unfreeze(object);
-  var propNames = Object.getOwnPropertyNames(obj);
-  for (let name of propNames) {
-    let value = obj[name];
-
-    if (value && typeof value === "object") {
-      value = deepUnFreeze(value);
-    }
-  }
-
-  return obj;
-};
 
 const deepFreeze = (object) => {
   var propNames = Object.getOwnPropertyNames(object);
@@ -49,19 +17,26 @@ const deepFreeze = (object) => {
 class BaseWebComponent extends HTMLElement {
   _shadowRoot = null;
   _events = {};
-  state = {};
+  _mounted = false;
+  _state = {};
+  _props = {};
 
   get props() {
     return deepFreeze({ ...this._props });
   }
+  get state() {
+    return deepFreeze({ ...this._state });
+  }
   static get props() {
+    return {};
+  }
+  static get state() {
     return {};
   }
   static get observedAttributes() {
     var copy = Object.keys(this.props).map((name) => name.toLowerCase());
     return [...Object.keys(this.props), copy];
   }
-  _props = {};
   constructor(props, state) {
     super();
     if (this.constructor.disableShadowDOM) {
@@ -74,6 +49,10 @@ class BaseWebComponent extends HTMLElement {
     if (props) {
       this._setProps({ ...props });
     }
+    this.setState({ ...this.constructor.state });
+    if (props) {
+      this.setState({ ...state });
+    }
     this.getAttributeNames().forEach((attrName) => {
       for (var name in this.props) {
         if (this.props.hasOwnProperty(name)) {
@@ -84,11 +63,6 @@ class BaseWebComponent extends HTMLElement {
         }
       }
     });
-    if (state) {
-      this.setState({ ...state });
-    }
-
-    this.render();
   }
   addEventListener(name, func) {
     var events = [...this._events];
@@ -121,9 +95,11 @@ class BaseWebComponent extends HTMLElement {
         this._events[name] = [...obj[name]];
       }
     }
-    this.render();
+    if (this._mounted) {
+      this.render();
+    }
   }
-  _setProps(obj) {
+  _setProps(obj, withoutSet) {
     for (var objName in obj) {
       let name = Object.keys(this.constructor.props).find(
         (_name) => _name.toLowerCase() === objName.toLowerCase()
@@ -151,34 +127,42 @@ class BaseWebComponent extends HTMLElement {
         ) {
           value = currentValue === "true";
         }
+        if (!withoutSet) {
+          this.setAttribute(name, value);
+        }
         this._props[name] = value;
       }
     }
-    this.render();
+    if (this._mounted) {
+      this.render();
+    }
   }
   setState(obj) {
-    this.state = deepUnfreeze(this.state);
     for (var name in obj) {
-      if (obj.hasOwnProperty(name) && name in this.state) {
-        this.state[name] = obj[name];
+      if (obj.hasOwnProperty(name) && name in this.constructor.state) {
+        this._state[name] = obj[name];
       }
     }
-    this.state = deepFreeze(this.state);
-    this.render();
+    if (this._mounted) {
+      this.render();
+    }
   }
   attributeChangedCallback(name, oldValue, newValue) {
     var oldProps = deepFreeze({ ...this.props });
-    this._setProps({ [name]: newValue });
+    this._setProps({ [name]: newValue }, true);
     var newProps = deepFreeze({ ...this.props });
     if (typeof this.onAttributeChanged !== "undefined") {
       this.onAttributeChanged(oldProps, newProps);
     }
-    this.render();
+    if (this._mounted) {
+      this.render();
+    }
   }
   connectedCallback() {
+    this._mounted = true;
     for (var prop in this.props) {
       if (this.props.hasOwnProperty(prop)) {
-        if (!this.hasAttribute(prop)) {
+        if (!this.hasAttribute(prop) && (typeof this.props[prop] !== 'object' || typeof this.props[prop] !== 'function')) {
           this.setAttribute(prop, this.props[prop]);
         }
       }
@@ -190,6 +174,7 @@ class BaseWebComponent extends HTMLElement {
   }
 
   disconnectedCallback() {
+    this._mounted = false;
     if (this.onUnmount) {
       this.onUnmount();
     }
