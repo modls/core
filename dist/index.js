@@ -1,19 +1,5 @@
 import { svg, html, render } from "https://unpkg.com/lighterhtml@^3.1.3?module";
 
-
-const deepFreeze = (object) => {
-  var propNames = Object.getOwnPropertyNames(object);
-  for (let name of propNames) {
-    let value = object[name];
-
-    if (value && typeof value === "object") {
-      deepFreeze(value);
-    }
-  }
-
-  return Object.freeze(object);
-};
-
 class BaseWebComponent extends HTMLElement {
   _shadowRoot = null;
   _events = {};
@@ -22,10 +8,10 @@ class BaseWebComponent extends HTMLElement {
   _props = {};
 
   get props() {
-    return deepFreeze({ ...this._props });
+    return { ...this._props };
   }
   get state() {
-    return deepFreeze({ ...this._state });
+    return { ...this._state };
   }
   static get props() {
     return {};
@@ -100,6 +86,7 @@ class BaseWebComponent extends HTMLElement {
     }
   }
   _setProps(obj, withoutSet) {
+    var oldProps = { ...this.props };
     for (var objName in obj) {
       let name = Object.keys(this.constructor.props).find(
         (_name) => _name.toLowerCase() === objName.toLowerCase()
@@ -127,10 +114,21 @@ class BaseWebComponent extends HTMLElement {
         ) {
           value = currentValue === "true";
         }
-        if (!withoutSet) {
+        if (
+          !withoutSet &&
+          typeof value !== "object" &&
+          typeof value !== "function"
+        ) {
           this.setAttribute(name, value);
         }
         this._props[name] = value;
+      }
+    }
+
+    var newProps = { ...this.props };
+    if (!withoutSet) {
+      if (typeof this.onAttributeChanged !== "undefined") {
+        this.onAttributeChanged(oldProps, newProps);
       }
     }
     if (this._mounted) {
@@ -148,9 +146,9 @@ class BaseWebComponent extends HTMLElement {
     }
   }
   attributeChangedCallback(name, oldValue, newValue) {
-    var oldProps = deepFreeze({ ...this.props });
+    var oldProps = { ...this.props };
     this._setProps({ [name]: newValue }, true);
-    var newProps = deepFreeze({ ...this.props });
+    var newProps = { ...this.props };
     if (typeof this.onAttributeChanged !== "undefined") {
       this.onAttributeChanged(oldProps, newProps);
     }
@@ -162,7 +160,11 @@ class BaseWebComponent extends HTMLElement {
     this._mounted = true;
     for (var prop in this.props) {
       if (this.props.hasOwnProperty(prop)) {
-        if (!this.hasAttribute(prop) && (typeof this.props[prop] !== 'object' || typeof this.props[prop] !== 'function')) {
+        if (
+          !this.hasAttribute(prop) &&
+          typeof this.props[prop] !== "object" &&
+          typeof this.props[prop] !== "function"
+        ) {
           this.setAttribute(prop, this.props[prop]);
         }
       }
