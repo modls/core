@@ -21,7 +21,7 @@ class BaseWebComponent extends HTMLElement {
   }
   static get observedAttributes() {
     var copy = Object.keys(this.props).map((name) => name.toLowerCase());
-    return [...Object.keys(this.props), copy];
+    return [...new Set([...Object.keys(this.props), ...copy])];
   }
   constructor(props, state) {
     super();
@@ -39,16 +39,6 @@ class BaseWebComponent extends HTMLElement {
     if (props) {
       this.setState({ ...state });
     }
-    this.getAttributeNames().forEach((attrName) => {
-      for (var name in this.props) {
-        if (this.props.hasOwnProperty(name)) {
-          if (attrName.toLowerCase() == name.toLowerCase()) {
-            this._setProps({ [name]: this.getAttribute(attrName) });
-            break;
-          }
-        }
-      }
-    });
   }
   addEventListener(name, func) {
     var events = [...this._events];
@@ -85,7 +75,7 @@ class BaseWebComponent extends HTMLElement {
       this.render();
     }
   }
-  _setProps(obj, withoutSet) {
+  _setProps(obj, fromAttr) {
     var oldProps = { ...this.props };
     for (var objName in obj) {
       let name = Object.keys(this.constructor.props).find(
@@ -94,7 +84,11 @@ class BaseWebComponent extends HTMLElement {
       if (!name) {
         continue;
       }
-      if (obj.hasOwnProperty(objName) && name in this.constructor.props) {
+      if (
+        obj.hasOwnProperty(objName) &&
+        name in this.constructor.props &&
+        fromAttr
+      ) {
         let currentValue =
           typeof this.props[name] === "undefined"
             ? this.constructor.props[name]
@@ -112,21 +106,13 @@ class BaseWebComponent extends HTMLElement {
           typeof currentValue === "boolean" &&
           typeof value === "string"
         ) {
-          value = currentValue === "true";
-        }
-        if (
-          !withoutSet &&
-          typeof value !== "object" &&
-          typeof value !== "function"
-        ) {
-          this.setAttribute(name, value);
+          value = currentValue.toLowerCase() === "true" || currentValue === "1";
         }
         this._props[name] = value;
       }
     }
-
     var newProps = { ...this.props };
-    if (!withoutSet) {
+    if (!fromAttr) {
       if (typeof this.onAttributeChanged !== "undefined") {
         this.onAttributeChanged(oldProps, newProps);
       }
@@ -158,17 +144,6 @@ class BaseWebComponent extends HTMLElement {
   }
   connectedCallback() {
     this._mounted = true;
-    for (var prop in this.props) {
-      if (this.props.hasOwnProperty(prop)) {
-        if (
-          !this.hasAttribute(prop) &&
-          typeof this.props[prop] !== "object" &&
-          typeof this.props[prop] !== "function"
-        ) {
-          this.setAttribute(prop, this.props[prop]);
-        }
-      }
-    }
     if (this.onMount) {
       this.onMount();
     }
