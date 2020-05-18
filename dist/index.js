@@ -1,12 +1,21 @@
-import { svg, html, render } from "https://unpkg.com/lighterhtml@^3.1.3?module";
+import { custom } from "https://unpkg.com/lighterhtml@^3.1.3?module";
+
+const { svg, html, render } = custom({
+  attribute(callback) {
+    return (node, name, original) => {
+      if (node instanceof BaseWebComponent)
+        return (value) => {
+          node._setProps({ [name]: value });
+        };
+      return callback.apply(this, [node, name, original]);
+    };
+  },
+});
 
 class BaseWebComponent extends HTMLElement {
-  _shadowRoot = null;
-  _events = {};
-  _mounted = false;
-  _state = {};
-  _props = {};
-
+  _mounted() {
+    return !!this.parentNode;
+  }
   get props() {
     return { ...this._props };
   }
@@ -25,12 +34,9 @@ class BaseWebComponent extends HTMLElement {
   }
   constructor(props, state) {
     super();
-    if (this.constructor.disableShadowDOM) {
-      this.render = render.bind(null, this, this.render.bind(this));
-    } else {
-      this._shadowRoot = this.attachShadow({ mode: "open" });
-      this.render = render.bind(null, this._shadowRoot, this.render.bind(this));
-    }
+    this._state = {};
+    this._props = {};
+    this.__propsInitial = {};
     this._setProps({ ...this.constructor.props });
     if (props) {
       this._setProps({ ...props });
@@ -39,43 +45,14 @@ class BaseWebComponent extends HTMLElement {
     if (props) {
       this.setState({ ...state });
     }
-  }
-  addEventListener(name, func) {
-    var events = { ...this._events };
-    name = name.toLowerCase();
-    if (!(name in events)) {
-      events[name] = [];
-    }
-    events[name].push(func.bind(this));
-    this._setEvent({ [name]: [...events[name]] });
-  }
-  removeEventListener(name) {
-    var events = { ...this._events };
-    name = name.toLowerCase();
-    if (name in events) {
-      this._setEvent({ [name]: [] });
+    if (this.constructor.disableShadowDOM) {
+      this.render = render.bind(null, this, this.render.bind(this));
+    } else {
+      this._shadowRoot = this.attachShadow({ mode: "open" });
+      this.render = render.bind(null, this._shadowRoot, this.render.bind(this));
     }
   }
-  trigger(name, ...data) {
-    var events = { ...this._events };
-    name = name.toLowerCase();
-    if (name in events) {
-      for (var i = 0; i < events[name].length; i++) {
-        events[name][i](...data);
-      }
-    }
-  }
-  _setEvent(obj) {
-    for (var name in obj) {
-      if (obj.hasOwnProperty(name)) {
-        this._events[name] = [...obj[name]];
-      }
-    }
-    if (this._mounted) {
-      this.render();
-    }
-  }
-  _setProps(obj, fromAttr) {
+  _setProps(obj) {
     var oldProps = { ...this.props };
     for (var objName in obj) {
       let name = Object.keys(this.constructor.props).find(
@@ -85,38 +62,46 @@ class BaseWebComponent extends HTMLElement {
         continue;
       }
       if (obj.hasOwnProperty(objName) && name in this.constructor.props) {
+        let value = obj[objName];
+        let originalValueType =
+          name in this.__propsInitial
+            ? typeof this.__propsInitial[name]
+            : typeof this.constructor.props[name];
+        if (
+          typeof this.constructor.props[name] === null &&
+          !(name in this.__propsInitial) &&
+          value !== null
+        ) {
+          this.__propsInitial[name] = typeof value;
+          originalValueType = this.__propsInitial[name];
+        }
         let currentValue =
           typeof this.props[name] === "undefined"
             ? this.constructor.props[name]
             : this.props[name];
-        let value = obj[objName];
-        if (fromAttr) {
-          if (typeof currentValue === "number" && typeof value === "string") {
-            value = parseFloat(value);
-          } else if (
-            (typeof currentValue === "array" ||
-              typeof currentValue === "object") &&
-            typeof value === "string"
-          ) {
-            value = JSON.parse(value);
-          } else if (
-            typeof currentValue === "boolean" &&
-            typeof value === "string"
-          ) {
-            value =
-              currentValue.toLowerCase() === "true" || currentValue === "1";
-          }
+        let currentValueType = typeof currentValue;
+        if (
+          (typeof value !== currentValueType && value !== null) ||
+          typeof value !== originalValueType
+        ) {
+          throw new Error(
+            "Property cannot be changed in another type. Type: ",
+            currentValue === null ? originalValueType : currentValueType,
+            "Received: ",
+            typeof value
+          );
         }
         this._props[name] = value;
       }
     }
     var newProps = { ...this.props };
-    if (!fromAttr) {
-      if (typeof this.onAttributeChanged !== "undefined") {
-        this.onAttributeChanged(oldProps, newProps);
-      }
+    if (typeof this.onPropsChanged !== "undefined") {
+      this.onPropsChanged(oldProps, newProps);
     }
-    if (this._mounted) {
+    this.forceUpdate();
+  }
+  forceUpdate(force) {
+    if (force || this._mounted()) {
       this.render();
     }
   }
@@ -126,31 +111,28 @@ class BaseWebComponent extends HTMLElement {
         this._state[name] = obj[name];
       }
     }
-    if (this._mounted) {
-      this.render();
-    }
+    this.forceUpdate();
   }
   attributeChangedCallback(name, oldValue, newValue) {
-    var oldProps = { ...this.props };
+    if (typeof newValue === "string") {
+      name = Object.keys(this.props).find(
+        (_name) => _name.toLowerCase() === name.toLowerCase()
+      );
+      if (typeof this.props[name] !== "string") {
+        newValue = JSON.parse(newValue);
+      }
+    }
     this._setProps({ [name]: newValue }, true);
-    var newProps = { ...this.props };
-    if (typeof this.onAttributeChanged !== "undefined") {
-      this.onAttributeChanged(oldProps, newProps);
-    }
-    if (this._mounted) {
-      this.render();
-    }
+    this.forceUpdate();
   }
   connectedCallback() {
-    this._mounted = true;
     if (this.onMount) {
       this.onMount();
     }
-    this.render();
+    this.forceUpdate(true);
   }
 
   disconnectedCallback() {
-    this._mounted = false;
     if (this.onUnmount) {
       this.onUnmount();
     }
