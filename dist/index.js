@@ -1,4 +1,5 @@
 import { custom } from "https://unpkg.com/lighterhtml@^3.1.3?module";
+import { deepEqual as equal } from "https://unpkg.com/fast-equals@^2.0.0?module";
 
 const { svg, html, render } = custom({
   attribute(callback) {
@@ -95,10 +96,12 @@ class BaseWebComponent extends HTMLElement {
       }
     }
     var newProps = { ...this.props };
-    if (typeof this.onPropsChanged !== "undefined") {
-      this.onPropsChanged(oldProps, newProps);
+    if (!equal(oldProps, newProps)) {
+      if (typeof this.onPropsChanged !== "undefined") {
+        this.onPropsChanged(oldProps, newProps);
+      }
+      this.forceUpdate();
     }
-    this.forceUpdate();
   }
   forceUpdate(force) {
     if (force || this._mounted()) {
@@ -106,12 +109,16 @@ class BaseWebComponent extends HTMLElement {
     }
   }
   setState(obj) {
+    let oldState = { ...this.state };
     for (var name in obj) {
       if (obj.hasOwnProperty(name) && name in this.constructor.state) {
         this._state[name] = obj[name];
       }
     }
-    this.forceUpdate();
+    var newState = { ...this.state };
+    if (!equal(oldState, newState)) {
+      this.forceUpdate();
+    }
   }
   attributeChangedCallback(name, oldValue, newValue) {
     if (typeof newValue === "string") {
@@ -123,7 +130,6 @@ class BaseWebComponent extends HTMLElement {
       }
     }
     this._setProps({ [name]: newValue }, true);
-    this.forceUpdate();
   }
   connectedCallback() {
     if (this.onMount) {
