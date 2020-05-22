@@ -4,7 +4,7 @@ import { deepEqual as equal } from "https://unpkg.com/fast-equals@^2.0.0?module"
 const { svg, html, render } = custom({
   attribute(callback) {
     return (node, name, original) => {
-      if (node instanceof BaseWebComponent)
+      if (node instanceof BaseWebComponent && name !== "ref")
         return (value) => {
           node._setProps({ [name]: value });
         };
