@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>JS Bin</title>
+  </head>
+  <body>
+    <x-base></x-base>
+
+    <script type="module">
+      import BaseWebComponent, { html } from "../dist/bundle.js";
+
+      class XBase1 extends BaseWebComponent {
+        static get state() {
+          return {
+            a: 1,
+          };
+        }
+        render() {
+          return html`<div
+            onclick=${() => this.setState({ a: this.state.a + 1 })}
+          >
+            test ${this.state.a}
+          </div>`;
+        }
+      }
+
+      window.customElements.define("x-base-1", XBase1);
+      class XBase2 extends BaseWebComponent {
+        static get props() {
+          return {
+            base1: 10,
+          };
+        }
+        render() {
+          return html`<div>test ${this.props.base1}</div>`;
+        }
+      }
+
+      window.customElements.define("x-base-2", XBase2);
+
+      class XBase extends BaseWebComponent {
+        constructor() {
+          super(...arguments);
+          this.xbase1 = {};
+        }
+        xbase1StateA() {
+          if ("current" in this.xbase1 && "state" in this.xbase1.current) {
+            return this.xbase1.current.state.a;
+          }
+          return 0;
+        }
+        render() {
+          return html`<div>
+            <x-base-1 ref=${this.xbase1}></x-base-1>
+            <x-base-2 base1=${this.xbase1StateA()}></x-base-2>
+          </div>`;
+        }
+      }
+
+      window.customElements.define("x-base", XBase);
+    </script>
+  </body>
+</html>
