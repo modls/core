@@ -13,6 +13,23 @@ const { svg, html, render } = custom({
   },
 });
 
+export const safeFetch = function () {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let response = await fetch(...arguments);
+      if (!response.ok) {
+        let err = new Error("HTTP status code: " + response.status);
+        err.response = response;
+        err.status = response.status;
+        throw err;
+      }
+      resolve(response);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
 class BaseWebComponent extends HTMLElement {
   _mounted() {
     return !!this.parentNode;
@@ -46,7 +63,11 @@ class BaseWebComponent extends HTMLElement {
     if (props) {
       this.setState({ ...state });
     }
-    if (this.constructor.disableShadowDOM) {
+    if (
+      typeof this.constructor.disableShadowDOM === "function"
+        ? this.constructor.disableShadowDOM()
+        : this.constructor.disableShadowDOM
+    ) {
       this.render = render.bind(null, this, this.render.bind(this));
     } else {
       this._shadowRoot = this.attachShadow({ mode: "open" });

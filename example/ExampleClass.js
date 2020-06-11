@@ -1,4 +1,5 @@
-import BaseWebComponent, { html } from "../dist/index.js";
+//import BaseWebComponent, { html } from "../dist/index.js";
+import BaseWebComponent, { html, safeFetch } from "../dist/bundle.js";
 
 export default class ExampleClass extends BaseWebComponent {
   static get props() {

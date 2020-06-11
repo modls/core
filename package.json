@@ -1,7 +1,8 @@
 {
   "name": "base-webcomponent",
   "description": "Base WebComponents",
-  "version": "0.1.2",
+  "version": "0.2.0",
+  "browser": "dist/bundle.js",
   "main": "index.js",
   "unpkg": "dist/index.js",
   "repositories": [
@@ -11,8 +12,8 @@
     }
   ],
   "scripts": {
-    "dist": "node 'build-dist.js'",
-    "dist:watch": "node 'build-dist.js' watch"
+    "dist": "node 'build-dist.js' && rollup -c",
+    "watch": "rollup -c -w"
   },
   "keywords": [
     "webcomponents",
@@ -29,5 +30,11 @@
   "bugs": {
     "url": "https://github.com/DominicVonk/BaseWebComponent/issues"
   },
-  "homepage": "https://github.com/DominicVonk/BaseWebComponent#readme"
+  "homepage": "https://github.com/DominicVonk/BaseWebComponent#readme",
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^8.0.0",
+    "rollup": "^2.13.1",
+    "rollup-plugin-terser": "^6.1.0",
+    "rollup-plugin-uglify": "^6.0.4"
+  }
 }
