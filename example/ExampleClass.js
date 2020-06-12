@@ -1,7 +1,7 @@
 //import BaseWebComponent, { html } from "../dist/index.js";
-import BaseWebComponent, { html, safeFetch } from "../dist/bundle.js";
+import { BaseWebComponent, html, safeFetch, BWC } from "../dist/esm.js";
 
-export default class ExampleClass extends BaseWebComponent {
+class ExampleClass extends BaseWebComponent {
   static get props() {
     return { startFrom: 0 };
   }
@@ -37,4 +37,4 @@ export default class ExampleClass extends BaseWebComponent {
   }
 }
 
-ExampleClass.register();
+export default BWC(ExampleClass); //bwc-example-class

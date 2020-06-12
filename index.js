@@ -1,7 +1,7 @@
 import { custom } from "lighterhtml";
 import { deepEqual as equal } from "fast-equals";
 
-const { svg, html, render } = custom({
+export const { svg, html, render } = custom({
   attribute(callback) {
     return (node, name, original) => {
       if (node instanceof BaseWebComponent && name !== "ref")
@@ -39,7 +39,7 @@ export const safeFetch = function () {
   });
 };
 
-class BaseWebComponent extends HTMLElement {
+export class BaseWebComponent extends HTMLElement {
   _mounted() {
     return !!this.__mounted;
   }
@@ -78,7 +78,6 @@ class BaseWebComponent extends HTMLElement {
     if (!tagName.includes("-")) {
       tagName = "bwc-" + tagName;
     }
-    console.log(tagName, classObject);
     window.customElements.define(tagName.toLowerCase(), classObject);
   }
   static get observedAttributes() {
@@ -228,5 +227,13 @@ class BaseWebComponent extends HTMLElement {
     return html`<div></div>`;
   }
 }
+
+export const BWC = (component, tagName = null) => {
+  if (component.prototype instanceof BaseWebComponent) {
+    component.register(tagName);
+    return component;
+  }
+  return component;
+};
+
 export default BaseWebComponent;
-export { BaseWebComponent, svg, html, render };

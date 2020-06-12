@@ -4,8 +4,15 @@ import { terser } from "rollup-plugin-terser";
 export default {
   input: "index.js",
   plugins: [resolve(), terser()],
-  output: {
-    file: "dist/bundle.js",
-    format: "esm",
-  },
+  output: [
+    {
+      file: "dist/esm.js",
+      format: "esm",
+    },
+    {
+      file: "dist/bundle.js",
+      format: "umd",
+      name: "BaseWebComponent",
+    },
+  ],
 };

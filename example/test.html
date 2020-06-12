@@ -7,9 +7,10 @@
   </head>
   <body>
     <x-base></x-base>
-
+    <script src="../dist/bundle.js"></script>
     <script type="module">
-      import BaseWebComponent, { html } from "../dist/bundle.js";
+      const { BaseWebComponent, html } = window.BaseWebComponent;
+      //import BaseWebComponent, { html } from "../dist/bundle.js";
 
       class XBase1 extends BaseWebComponent {
         static get state() {
