@@ -1,6 +1,13 @@
 import { custom } from "https://unpkg.com/lighterhtml@^3.1.3?module";
 import { deepEqual as equal } from "https://unpkg.com/fast-equals@^2.0.0?module";
-
+if (window && window.HTMLCollection) {
+  HTMLCollection.prototype.map = Array.prototype.map;
+  HTMLCollection.prototype.forEach = Array.prototype.forEach;
+}
+if (window && window.NodeList) {
+  NodeList.prototype.map = Array.prototype.map;
+  NodeList.prototype.forEach = Array.prototype.forEach;
+}
 export const { svg, html, render } = custom({
   attribute(callback) {
     return (node, name, original) => {
@@ -110,6 +117,15 @@ export class BaseWebComponent extends HTMLElement {
       this._shadowRoot = this.attachShadow({ mode: "open" });
       this.render = render.bind(null, this._shadowRoot, this.render.bind(this));
     }
+    let contents = document.createElement("template");
+    contents.innerHTML = this.innerHTML.trim();
+    this._contents = contents.content.childNodes;
+    this.innerHTML = "";
+  }
+  get contents() {
+    return this._contents.length
+      ? this._contents.map((n) => n.cloneNode(true))
+      : [];
   }
   _setProps(obj, render = true) {
     var oldProps = { ...this.props };

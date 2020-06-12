@@ -54,6 +54,7 @@
         }
         render() {
           return html`<div>
+            ${this.contents.length}
             <x-base-1 ref=${this.xbase1}></x-base-1>
             <x-base-2 base1=${this.xbase1StateA()}></x-base-2>
           </div>`;
