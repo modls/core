@@ -55,6 +55,32 @@ class BaseWebComponent extends HTMLElement {
   static get state() {
     return {};
   }
+  static register(classObjectOrTagName = null, tagName = null) {
+    const toKebabCase = (str) =>
+      str &&
+      str
+        .match(
+          /[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g
+        )
+        .map((x) => x.toLowerCase())
+        .join("-");
+    let classObject = this;
+    if (typeof classObjectOrTagName === "string") {
+      tagName = classObjectOrTagName;
+    } else if (typeof classObjectOrTagName === "function") {
+      classObject = classObjectOrTagName;
+    }
+
+    if (tagName === null) {
+      tagName = "bwc-" + toKebabCase(classObject.name);
+    }
+
+    if (!tagName.includes("-")) {
+      tagName = "bwc-" + tagName;
+    }
+    console.log(tagName, classObject);
+    window.customElements.define(tagName.toLowerCase(), classObject);
+  }
   static get observedAttributes() {
     var copy = Object.keys(this.props).map((name) => name.toLowerCase());
     return [...new Set([...Object.keys(this.props), ...copy])];

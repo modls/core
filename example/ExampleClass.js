@@ -37,4 +37,4 @@ export default class ExampleClass extends BaseWebComponent {
   }
 }
 
-window.customElements.define("x-exampleclass", ExampleClass);
+ExampleClass.register();
