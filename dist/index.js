@@ -62,6 +62,18 @@ export class BaseWebComponent extends HTMLElement {
   static get state() {
     return {};
   }
+  static addInstance(instance) {
+    if (!this.__instances) {
+      this.__instances = [];
+    }
+    this.__instances.push(instance);
+  }
+  static getInstances() {
+    if (!this.__instances) {
+      this.__instances = [];
+    }
+    return this.__instances;
+  }
   static register(classObjectOrTagName = null, tagName = null) {
     const toKebabCase = (str) =>
       str &&
@@ -93,6 +105,7 @@ export class BaseWebComponent extends HTMLElement {
   }
   constructor(props, state) {
     super();
+    this.constructor.addInstance(this);
     this.__ref = false;
     this.__mounted = false;
     this._state = {};
