@@ -13,13 +13,13 @@ export const { svg, html, render } = custom({
     return (node, name, original) => {
       if (node instanceof BaseWebComponent && name !== "ref")
         return (value) => {
-          node._setProps({ [name]: value }, node.__mounted);
+          node._setProps({ [name]: value });
         };
       if (node instanceof BaseWebComponent && name === "ref") {
         return (value) => {
           callback.apply(this, [node, name, original])(value);
           node.__ref = true;
-          if (node.__mounted && node != value.current) {
+          if (node != value.current) {
             node.forceUpdate();
           }
         };
@@ -28,7 +28,6 @@ export const { svg, html, render } = custom({
     };
   },
 });
-
 export const safeFetch = function () {
   return new Promise(async (resolve, reject) => {
     try {
@@ -62,17 +61,17 @@ export class BaseWebComponent extends HTMLElement {
   static get state() {
     return {};
   }
-  static addInstance(instance) {
-    if (!this.__instances) {
-      this.__instances = [];
+  static get hooks() {
+    if (!this.__hooks) {
+      this.__hooks = [];
     }
-    this.__instances.push(instance);
+    return this.__hooks;
   }
-  static getInstances() {
-    if (!this.__instances) {
-      this.__instances = [];
+  static addHook(hook) {
+    if (!this.__hooks) {
+      this.__hooks = [];
     }
-    return this.__instances;
+    this.__hooks.push(hook);
   }
   static register(classObjectOrTagName = null, tagName = null) {
     const toKebabCase = (str) =>
@@ -105,20 +104,23 @@ export class BaseWebComponent extends HTMLElement {
   }
   constructor(props, state) {
     super();
-    this.constructor.addInstance(this);
+
     this.__ref = false;
     this.__mounted = false;
     this._state = {};
     this._props = {};
     this.__propsInitial = {};
-    this._setProps({ ...this.constructor.props }, false);
+    this._setProps({ ...this.constructor.props });
     if (props) {
-      this._setProps({ ...props }, false);
+      this._setProps({ ...props });
     }
-    this.setState({ ...this.constructor.state }, false);
+    this.setState({ ...this.constructor.state });
     if (props) {
-      this.setState({ ...state }, false);
+      this.setState({ ...state });
     }
+    this.constructor.hooks.forEach((hook) => {
+      hook(this);
+    });
     if (
       typeof this.constructor.disableShadowDOM === "function"
         ? this.constructor.disableShadowDOM()
@@ -140,7 +142,7 @@ export class BaseWebComponent extends HTMLElement {
       ? this._contents.map((n) => n.cloneNode(true))
       : [];
   }
-  _setProps(obj, render = true) {
+  _setProps(obj) {
     var oldProps = { ...this.props };
     for (var objName in obj) {
       let name = Object.keys(this.constructor.props).find(
@@ -188,7 +190,7 @@ export class BaseWebComponent extends HTMLElement {
       }
     }
     var newProps = { ...this.props };
-    if (!equal(oldProps, newProps) && render) {
+    if (!equal(oldProps, newProps)) {
       if (typeof this.onPropsChanged !== "undefined") {
         this.onPropsChanged(oldProps, newProps);
       }
@@ -219,7 +221,7 @@ export class BaseWebComponent extends HTMLElement {
       this.render();
     }
   }
-  setState(obj, render = true) {
+  setState(obj) {
     let oldState = { ...this.state };
     for (var name in obj) {
       if (obj.hasOwnProperty(name) && name in this.constructor.state) {
@@ -227,7 +229,7 @@ export class BaseWebComponent extends HTMLElement {
       }
     }
     var newState = { ...this.state };
-    if (!equal(oldState, newState) && render) {
+    if (!equal(oldState, newState)) {
       this.forceUpdate();
     }
   }
@@ -242,14 +244,14 @@ export class BaseWebComponent extends HTMLElement {
         } catch (e) {}
       }
     }
-    this._setProps({ [name]: newValue }, this.__mounted);
+    this._setProps({ [name]: newValue });
   }
   connectedCallback() {
     if (this.onMount) {
       this.onMount();
     }
     this.__mounted = true;
-    this.forceUpdate(true);
+    this.forceUpdate();
   }
 
   disconnectedCallback() {

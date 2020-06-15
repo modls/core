@@ -104,9 +104,7 @@ export class BaseWebComponent extends HTMLElement {
   }
   constructor(props, state) {
     super();
-    this.constructor.hooks.forEach((hook) => {
-      hook(this);
-    });
+
     this.__ref = false;
     this.__mounted = false;
     this._state = {};
@@ -120,6 +118,9 @@ export class BaseWebComponent extends HTMLElement {
     if (props) {
       this.setState({ ...state });
     }
+    this.constructor.hooks.forEach((hook) => {
+      hook(this);
+    });
     if (
       typeof this.constructor.disableShadowDOM === "function"
         ? this.constructor.disableShadowDOM()
