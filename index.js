@@ -62,6 +62,18 @@ export class BaseWebComponent extends HTMLElement {
   static get state() {
     return {};
   }
+  static addInstance(instance) {
+    if (!this.__instances) {
+      this.__instances = [];
+    }
+    this.__instances.push(instance);
+  }
+  static getInstances() {
+    if (!this.__instances) {
+      this.__instances = [];
+    }
+    return this.__instances;
+  }
   static register(classObjectOrTagName = null, tagName = null) {
     const toKebabCase = (str) =>
       str &&
@@ -93,6 +105,7 @@ export class BaseWebComponent extends HTMLElement {
   }
   constructor(props, state) {
     super();
+    this.constructor.addInstance(this);
     this.__ref = false;
     this.__mounted = false;
     this._state = {};
@@ -160,10 +173,15 @@ export class BaseWebComponent extends HTMLElement {
           typeof value !== originalValueType
         ) {
           throw new Error(
-            "Property cannot be changed in another type. Type: ",
-            currentValue === null ? originalValueType : currentValueType,
-            "Received: ",
-            typeof value
+            [
+              'Property "',
+              name,
+              '" cannot be changed in another type. Type: "',
+              currentValue === null ? originalValueType : currentValueType,
+              '" Received: "',
+              typeof value,
+              '"',
+            ].join("")
           );
         }
         this._props[name] = value;
@@ -219,7 +237,9 @@ export class BaseWebComponent extends HTMLElement {
         (_name) => _name.toLowerCase() === name.toLowerCase()
       );
       if (typeof this.props[name] !== "string") {
-        newValue = JSON.parse(newValue);
+        try {
+          newValue = JSON.parse(newValue);
+        } catch (e) {}
       }
     }
     this._setProps({ [name]: newValue }, this.__mounted);

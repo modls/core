@@ -160,10 +160,15 @@ export class BaseWebComponent extends HTMLElement {
           typeof value !== originalValueType
         ) {
           throw new Error(
-            "Property cannot be changed in another type. Type: ",
-            currentValue === null ? originalValueType : currentValueType,
-            "Received: ",
-            typeof value
+            [
+              'Property "',
+              name,
+              '" cannot be changed in another type. Type: "',
+              currentValue === null ? originalValueType : currentValueType,
+              '" Received: "',
+              typeof value,
+              '"',
+            ].join("")
           );
         }
         this._props[name] = value;
@@ -219,7 +224,9 @@ export class BaseWebComponent extends HTMLElement {
         (_name) => _name.toLowerCase() === name.toLowerCase()
       );
       if (typeof this.props[name] !== "string") {
-        newValue = JSON.parse(newValue);
+        try {
+          newValue = JSON.parse(newValue);
+        } catch (e) {}
       }
     }
     this._setProps({ [name]: newValue }, this.__mounted);
