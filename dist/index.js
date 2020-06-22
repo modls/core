@@ -45,6 +45,8 @@ export const safeFetch = function () {
   });
 };
 
+let _contents = [];
+
 export class BaseWebComponent extends HTMLElement {
   _mounted() {
     return !!this.__mounted;
@@ -100,7 +102,7 @@ export class BaseWebComponent extends HTMLElement {
   }
   static get observedAttributes() {
     var copy = Object.keys(this.props).map((name) => name.toLowerCase());
-    return [...new Set([...Object.keys(this.props), ...copy])];
+    return [...new Set([...Object.keys(this.props), ...copy, "bwc-id"])];
   }
   constructor(props, state) {
     super();
@@ -132,9 +134,17 @@ export class BaseWebComponent extends HTMLElement {
       this._shadowRoot = this.attachShadow({ mode: "open" });
       this.render = render.bind(null, this._shadowRoot, this.render.bind(this));
     }
-    let contents = document.createElement("template");
-    contents.innerHTML = this.innerHTML.trim();
-    this._contents = contents.content.childNodes;
+    if (!this.hasAttribute("bwc-id")) {
+      let contents = document.createElement("template");
+      contents.innerHTML = this.innerHTML.trim();
+      this._contents = contents.content.childNodes;
+      _contents.push(this._contents.map((n) => n.cloneNode(true)));
+      this.setAttribute("bwc-id", _contents.length - 1);
+    } else {
+      this._contents = _contents[this.getAttribute("bwc-id")].map((n) =>
+        n.cloneNode(true)
+      );
+    }
     this.innerHTML = "";
   }
   get contents() {
@@ -234,17 +244,19 @@ export class BaseWebComponent extends HTMLElement {
     }
   }
   attributeChangedCallback(name, oldValue, newValue) {
-    if (typeof newValue === "string") {
-      name = Object.keys(this.props).find(
-        (_name) => _name.toLowerCase() === name.toLowerCase()
-      );
-      if (typeof this.props[name] !== "string") {
-        try {
-          newValue = JSON.parse(newValue);
-        } catch (e) {}
+    if (name !== "bwc-id") {
+      if (typeof newValue === "string") {
+        name = Object.keys(this.props).find(
+          (_name) => _name.toLowerCase() === name.toLowerCase()
+        );
+        if (typeof this.props[name] !== "string") {
+          try {
+            newValue = JSON.parse(newValue);
+          } catch (e) {}
+        }
       }
+      this._setProps({ [name]: newValue });
     }
-    this._setProps({ [name]: newValue });
   }
   connectedCallback() {
     if (this.onMount) {

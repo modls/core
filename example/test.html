@@ -6,7 +6,11 @@
     <title>JS Bin</title>
   </head>
   <body>
-    <x-base></x-base>
+    <x-base>
+      <x-base-1 ref="${this.xbase1}"></x-base-1>
+      <x-base-2 base1="5"></x-base-2>
+      <x-base-2 base1="10"></x-base-2>
+    </x-base>
     <script src="../dist/bundle.js"></script>
     <script type="module">
       const { BaseWebComponent, html } = window.BaseWebComponent;
@@ -54,9 +58,7 @@
         }
         render() {
           return html`<div>
-            ${this.contents.length}
-            <x-base-1 ref=${this.xbase1}></x-base-1>
-            <x-base-2 base1=${this.xbase1StateA()}></x-base-2>
+            ${this.contents}
           </div>`;
         }
       }
