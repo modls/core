@@ -12,7 +12,7 @@ export default {
     {
       file: "dist/bundle.js",
       format: "umd",
-      name: "BaseWebComponent",
+      name: "modls",
     },
   ],
 };

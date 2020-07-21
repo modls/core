@@ -1,14 +1,14 @@
 {
-  "name": "base-webcomponent",
-  "description": "Base WebComponents",
-  "version": "0.3.5",
+  "name": "@modls/core",
+  "description": "Modls pronounched as modules (former BaseWebComponent)",
+  "version": "0.4.0",
   "browser": "dist/bundle.js",
   "main": "index.js",
   "unpkg": "dist/index.js",
   "repositories": [
     {
       "type": "git",
-      "url": "https://github.com/DominicVonk/BaseWebComponent.git"
+      "url": "https://github.com/modls/core.git"
     }
   ],
   "scripts": {
@@ -20,20 +20,23 @@
     "web components",
     "base webcomponent",
     "base component",
+    "modls",
+    "modules",
+    "web modules",
     "component"
   ],
   "dependencies": {
     "fast-equals": "^2.0.0",
-    "lighterhtml": "^3.1.3"
+    "lighterhtml": "^4.0.2"
   },
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/DominicVonk/BaseWebComponent/issues"
+    "url": "https://github.com/modls/core/issues"
   },
-  "homepage": "https://github.com/DominicVonk/BaseWebComponent#readme",
+  "homepage": "https://github.com/modls/core#readme",
   "devDependencies": {
-    "@rollup/plugin-node-resolve": "^8.0.0",
-    "rollup": "^2.13.1",
+    "@rollup/plugin-node-resolve": "^8.4.0",
+    "rollup": "^2.22.1",
     "rollup-plugin-terser": "^6.1.0",
     "rollup-plugin-uglify": "^6.0.4"
   }

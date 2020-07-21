@@ -1,69 +1,71 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>JS Bin</title>
-  </head>
-  <body>
-    <x-base>
-      <x-base-1 ref="${this.xbase1}"></x-base-1>
-      <x-base-2 base1="5"></x-base-2>
-      <x-base-2 base1="10"></x-base-2>
-    </x-base>
-    <script src="../dist/bundle.js"></script>
-    <script type="module">
-      const { BaseWebComponent, html } = window.BaseWebComponent;
-      //import BaseWebComponent, { html } from "../dist/bundle.js";
 
-      class XBase1 extends BaseWebComponent {
-        static get state() {
-          return {
-            a: 1,
-          };
-        }
-        render() {
-          return html`<div
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>JS Bin</title>
+</head>
+
+<body>
+  <modls-x-base>
+    <modls-x-base1 ref="${this.xbase1}"></modls-x-base1>
+    <modls-x-base2 base1="5"></modls-x-base2>
+    <modls-x-base2 base1="10"></modls-x-base2>
+  </modls-x-base>
+  <script src="../dist/bundle.js"></script>
+  <script type="module">
+    const { Component, html, registerComponent } = window.modls;
+
+    class XBase1 extends Component {
+      static get state() {
+        return {
+          a: 1,
+        };
+      }
+      render() {
+        return html`<div
             onclick=${() => this.setState({ a: this.state.a + 1 })}
           >
             test ${this.state.a}
           </div>`;
-        }
       }
+    }
 
-      window.customElements.define("x-base-1", XBase1);
-      class XBase2 extends BaseWebComponent {
-        static get props() {
-          return {
-            base1: 10,
-          };
-        }
-        render() {
-          return html`<div>test ${this.props.base1}</div>`;
-        }
+
+    registerComponent(XBase1);
+    class XBase2 extends Component {
+      static get props() {
+        return {
+          base1: 10,
+        };
       }
+      render() {
+        return html`<div>test ${this.props.base1}</div>`;
+      }
+    }
+    registerComponent(XBase2);
 
-      window.customElements.define("x-base-2", XBase2);
-
-      class XBase extends BaseWebComponent {
-        constructor() {
-          super(...arguments);
-          this.xbase1 = {};
+    class XBase extends Component {
+      constructor() {
+        super(...arguments);
+        this.xbase1 = {};
+      }
+      xbase1StateA() {
+        if ("current" in this.xbase1 && "state" in this.xbase1.current) {
+          return this.xbase1.current.state.a;
         }
-        xbase1StateA() {
-          if ("current" in this.xbase1 && "state" in this.xbase1.current) {
-            return this.xbase1.current.state.a;
-          }
-          return 0;
-        }
-        render() {
-          return html`<div>
+        return 0;
+      }
+      render() {
+        return html`<div>
             ${this.contents}
           </div>`;
-        }
       }
+    }
 
-      window.customElements.define("x-base", XBase);
-    </script>
-  </body>
+    registerComponent(XBase);
+  </script>
+</body>
+
 </html>

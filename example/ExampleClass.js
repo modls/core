@@ -1,7 +1,12 @@
 //import BaseWebComponent, { html } from "../dist/index.js";
-import { BaseWebComponent, html, safeFetch, BWC } from "../dist/esm.js";
+import {
+  RawComponent,
+  html,
+  safeFetch,
+  registerComponent,
+} from "../dist/esm.js";
 
-class ExampleClass extends BaseWebComponent {
+class ExampleClass extends RawComponent {
   static get props() {
     return { startFrom: 0 };
   }
@@ -37,4 +42,4 @@ class ExampleClass extends BaseWebComponent {
   }
 }
 
-export default BWC(ExampleClass); //bwc-example-class
+export default registerComponent(ExampleClass); //modls-example-class
