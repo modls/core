@@ -32,7 +32,10 @@ export default class ExampleClass extends Component {
     console.log("Mounted");
     this.setState({ number: this.props.startFrom });
   }
-  onAttributeChanged(oldProps, newProps) {
+  onPropsChanged(oldProps, newProps) {
+    console.log(oldProps, newProps);
+  }
+  onInitialRender(oldProps, newProps) {
     console.log(oldProps, newProps);
   }
   onUnmount() {
