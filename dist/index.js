@@ -245,7 +245,7 @@ export class Component extends HTMLElement {
         if (typeof this.props[name] !== "string") {
           try {
             newValue = JSON.parse(newValue);
-          } catch (e) {}
+          } catch (e) { }
         }
       }
       this._setProps({ [name]: newValue });
@@ -257,6 +257,9 @@ export class Component extends HTMLElement {
     }
     this.__mounted = true;
     this.forceUpdate();
+    if (this.onInitialRender) {
+      this.onInitialRender();
+    }
   }
 
   disconnectedCallback() {
