@@ -1,7 +1,11 @@
 {
   "name": "@modls/core",
   "description": "Modls pronounched as modules (former BaseWebComponent)",
+<<<<<<< HEAD
   "version": "0.5.1",
+=======
+  "version": "0.5.0",
+>>>>>>> eff242bbfa4d423ee6e15b93ffa0f4ed8ab276b4
   "browser": "dist/bundle.js",
   "main": "index.js",
   "unpkg": "dist/index.js",

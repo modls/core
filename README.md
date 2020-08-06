@@ -1,27 +1,27 @@
-![Node.js Package](https://github.com/DominicVonk/BaseWebComponent/workflows/Node.js%20Package/badge.svg)
+![Node.js Package](https://github.com/modls/core/workflows/Node.js%20Package/badge.svg)
 
-# Base WebComponent
+# Modls (pronounched as Modules)
 
-## How To Use BaseWebComponent
+## How To Use Modls
 
-Install the module via `npm i base-webcomponent` and consume it as such:
+Install the module via `npm i @modls/core` and consume it as such:
 
 ```js
-import BaseWebComponent, { html } from "base-webcomponent";
+import { Component, html } from "@modls/core";
 ```
 
 Alternatively you can use a CDN such as unpkg:
 
 ```js
-import BaseWebComponent, { html } from "https://unpkg.com/base-webcomponent";
+import { html, Component } from "https://unpkg.com/@modls/core";
 ```
 
 ## Example
 
 ```js
-import BaseWebComponent, { html } from "base-webcomponent";
+import { html, Component, registerComponent } from "@modls/core";
 
-export default class ExampleClass extends BaseWebComponent {
+export default class ExampleClass extends Component {
   static get props() {
     return { startFrom: 0 };
   }
@@ -55,7 +55,7 @@ export default class ExampleClass extends BaseWebComponent {
   }
 }
 
-window.customElements.define("x-exampleclass", ExampleClass);
+registerComponent(ExampleClass);
 ```
 
 ### Thanks to
