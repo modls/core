@@ -25,7 +25,7 @@ class ExampleClass extends RawComponent {
   onUnmount() {
     console.log("Unmounted");
   }
-  updateNumber() {
+  updateNumber(i) {
     if (this.state.number === 10) {
       this.remove();
     } else {
@@ -35,7 +35,7 @@ class ExampleClass extends RawComponent {
   render() {
     return html`
       Started from ${this.props.startFrom} <br />
-      <button onclick=${() => this.updateNumber()}>
+      <button onclick=${()=> this.updateNumber(5)}>
         Clicked ${this.state.number} times
       </button>
     `;
