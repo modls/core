@@ -107,7 +107,6 @@ export class Component extends HTMLElement {
   }
   constructor(props, state) {
     super();
-
     this.__ref = false;
     this.__mounted = false;
     this._state = {};
@@ -118,7 +117,7 @@ export class Component extends HTMLElement {
       this._setProps({ ...props });
     }
     this.setState({ ...this.constructor.state });
-    if (props) {
+    if (state) {
       this.setState({ ...state });
     }
     this.constructor.hooks.forEach((hook) => {
@@ -257,8 +256,8 @@ export class Component extends HTMLElement {
     }
     this.__mounted = true;
     this.forceUpdate();
-    if (this.onInitialRender) {
-      this.onInitialRender();
+    if (this.onMounted) {
+      this.onMounted();
     }
   }
 
@@ -267,6 +266,10 @@ export class Component extends HTMLElement {
       this.onUnmount();
     }
     this.__mounted = false;
+
+    if (this.onUnmounted) {
+      this.onUnmounted();
+    }
   }
 
   render() {

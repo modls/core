@@ -29,16 +29,19 @@ export default class ExampleClass extends Component {
     return { number: 0 };
   }
   onMount() {
-    console.log("Mounted");
+    console.log("Mount");
     this.setState({ number: this.props.startFrom });
   }
   onPropsChanged(oldProps, newProps) {
     console.log(oldProps, newProps);
   }
-  onInitialRender(oldProps, newProps) {
-    console.log(oldProps, newProps);
+  onMounted() {
+    console.log("Mounted");
   }
   onUnmount() {
+    console.log("Unmount");
+  }
+  onUnmounted() {
     console.log("Unmounted");
   }
   updateNumber() {
