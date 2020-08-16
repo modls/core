@@ -25,24 +25,18 @@ export default class ExampleClass extends Component {
   static get props() {
     return { startFrom: 0 };
   }
-  static get state() {
-    return { number: 0 };
-  }
   onMount() {
     console.log("Mount");
     this.setState({ number: this.props.startFrom });
   }
-  onPropsChanged(oldProps, newProps) {
-    console.log(oldProps, newProps);
+  onDidUpdate(oldProps, oldState) {
+    console.log(oldProps, oldState);
   }
-  onMounted() {
+  onDidMount() {
     console.log("Mounted");
   }
-  onUnmount() {
+  onWillUnmount() {
     console.log("Unmount");
-  }
-  onUnmounted() {
-    console.log("Unmounted");
   }
   updateNumber() {
     if (this.state.number === 10) {

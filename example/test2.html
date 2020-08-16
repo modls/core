@@ -13,7 +13,7 @@
   </modls-x-base>
   <script src="../dist/bundle.js"></script>
   <script type="module">
-    const { RawComponent: Component, html, registerComponent } = window.modls;
+    const { Component, html, registerComponent } = window.modls;
 
     class XBase1 extends Component {
       static get props() {
@@ -26,7 +26,6 @@
         this.state = {
           a: 1,
         };
-        console.log(this.identifier)
       }
       update() {
         this.setState({ a: this.state.a + 1 })
@@ -37,7 +36,6 @@
             onclick=${() => this.update()}
           >
             test ${this.state.a}
-            ${this.contents}
           </div>`;
       }
     }
@@ -81,9 +79,7 @@
       }
       render() {
         return html`<div>
-              <modls-x-base1 update=${(info) => this.update(info)}>
-                <modls-x-base2 base1=${5}></modls-x-base2>
-                </modls-x-base1>
+              <modls-x-base1 update=${(info) => this.update(info)}></modls-x-base1>
               ${this.state.rows}
               ${this.contents}
              

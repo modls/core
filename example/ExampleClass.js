@@ -10,19 +10,20 @@ class ExampleClass extends RawComponent {
   static get props() {
     return { startFrom: 0 };
   }
-  static get state() {
-    return {
-      number: 0,
-    };
+  constructor() {
+    super(...arguments);
+    this.state = {
+      number: 0
+    }
   }
-  onMount() {
+  onDidMount() {
     console.log("Mounted");
     this.setState({ number: this.props.startFrom });
   }
   onAttributeChanged(oldProps, newProps) {
     console.log(oldProps, newProps);
   }
-  onUnmount() {
+  onWillUnmount() {
     console.log("Unmounted");
   }
   updateNumber(i) {
