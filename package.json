@@ -4,7 +4,7 @@
   "version": "0.6.0",
   "browser": "dist/bundle.js",
   "main": "index.js",
-  "unpkg": "dist/index.js",
+  "unpkg": "dist/esm.js",
   "repositories": [
     {
       "type": "git",
@@ -12,7 +12,7 @@
     }
   ],
   "scripts": {
-    "dist": "node 'build-dist.js' && rollup -c",
+    "dist": "rollup -c",
     "watch": "rollup -c -w"
   },
   "keywords": [
