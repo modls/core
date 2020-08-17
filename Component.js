@@ -72,7 +72,7 @@ export default class Component extends HTMLElement {
             );
             if (obj.hasOwnProperty(objName)) {
                 if (!name) {
-                    console.log('Please define your property inside the \'static get props\' of ' + this.constructor.name + ', otherwise your component will not be watching this property')
+                    console.warn('Please define your property \'' + objName + '\' inside the \'static get props()\' of \'' + this.constructor.name + '\', otherwise your component will not be watching this property')
                     name = objName;
                 }
                 let value = obj[objName];
@@ -138,7 +138,7 @@ export default class Component extends HTMLElement {
 
     onDidMount() { }
     onWillUnmount() { }
-    onDidUpdate() { }
+    onDidUpdate(oldProps, oldState) { }
     render() {
         return html`<div></div>`;
     }
