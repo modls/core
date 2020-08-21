@@ -44,6 +44,15 @@ export default class Component extends HTMLElement {
         this._sheet = new CSSStyleSheet();
         this.__propsInitial = {};
         this._setProps({ ...this.constructor.props });
+        if (this.constructor.___hooks) {
+            this.constructor.___hooks.forEach(e => e(this));
+        }
+        if (this.constructor.___props) {
+            this.constructor.___props;
+        }
+        if (props) {
+            this._setProps({ ...this.constructor.___props });
+        }
         if (props) {
             this._setProps({ ...props });
         }
