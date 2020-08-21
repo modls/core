@@ -1,13 +1,13 @@
 //import BaseWebComponent, { html } from "../dist/index.js";
 import {
-  RawComponent,
+  Component,
   html,
   safeFetch,
   registerComponent,
   css
 } from "../dist/esm.js";
 
-class ExampleClass extends RawComponent {
+class ExampleClass extends Component {
   static get props() {
     return { startFrom: 0 };
   }

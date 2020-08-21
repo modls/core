@@ -1,7 +1,7 @@
 {
   "name": "@modls/core",
   "description": "Modls pronounched as modules (former BaseWebComponent)",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "browser": "dist/bundle.js",
   "main": "index.js",
   "unpkg": "dist/esm.js",
@@ -26,6 +26,7 @@
     "component"
   ],
   "dependencies": {
+    "construct-style-sheets-polyfill": "^2.4.0",
     "fast-equals": "^2.0.0",
     "lighterhtml": "^4.0.2"
   },

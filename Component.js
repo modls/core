@@ -1,6 +1,6 @@
 import lighterhtml from './lib/lighterhtml.js';
 import { deepEqual as equal } from "fast-equals";
-
+import 'construct-style-sheets-polyfill';
 
 
 export default class Component extends HTMLElement {
