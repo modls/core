@@ -40,6 +40,7 @@ export default class Component extends HTMLElement {
         this.state = {};
         this._props = {};
         this.identifier = uuid();
+        this._sheet = new CSSStyleSheet();
         this.__propsInitial = {};
         this._setProps({ ...this.constructor.props });
         if (props) {
@@ -61,8 +62,11 @@ export default class Component extends HTMLElement {
     }
     _renderMethod() {
         this._shadowRoot = this.attachShadow({ mode: "open" });
-
+        this._shadowRoot.adoptedStyleSheets = [this._sheet];
         this.render = render.bind(null, this._shadowRoot, this.render.bind(this));
+    }
+    _cssMethod() {
+        this._sheet.replaceSync(this.styles());
     }
     _setProps(obj) {
         var oldProps = { ...this.props };
@@ -90,6 +94,7 @@ export default class Component extends HTMLElement {
         if (force === true || this._mounted()) {
             this.contents;
             this.render();
+            this._sheet.replaceSync(this.styles());
         }
     }
     async setState(obj) {
@@ -139,8 +144,12 @@ export default class Component extends HTMLElement {
     onDidMount() { }
     onWillUnmount() { }
     onDidUpdate(oldProps, oldState) { }
+    styles() {
+        return '';
+    }
     render() {
-        return html`<div></div>`;
+        return html`< div>
+    </div>`;
     }
 }
 const { html, render } = lighterhtml(Component);

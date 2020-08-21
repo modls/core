@@ -4,6 +4,7 @@ import {
   html,
   safeFetch,
   registerComponent,
+  css
 } from "../dist/esm.js";
 
 class ExampleClass extends RawComponent {
@@ -15,6 +16,13 @@ class ExampleClass extends RawComponent {
     this.state = {
       number: 0
     }
+  }
+  styles() {
+    return css`
+    button {
+      color: red;
+    }
+    `
   }
   onDidMount() {
     console.log("Mounted");
@@ -36,7 +44,7 @@ class ExampleClass extends RawComponent {
   render() {
     return html`
       Started from ${this.props.startFrom} <br />
-      <button onclick=${()=> this.updateNumber(5)}>
+      <button onclick=${() => this.updateNumber(5)}>
         Clicked ${this.state.number} times
       </button>
     `;
