@@ -41,7 +41,7 @@ export default class Component extends HTMLElement {
         this.state = {};
         this._props = {};
         this.identifier = this._genUUID();
-        this._sheet = new CSSStyleSheet();
+        this._sheet = Object.create(CSSStyleSheet.prototype);
         this.__propsInitial = {};
         this._setProps({ ...this.constructor.props });
         if (this.constructor.___hooks) {

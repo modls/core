@@ -1,9 +1,10 @@
 import resolve from "@rollup/plugin-node-resolve";
 import { terser } from "rollup-plugin-terser";
-
+import commonjs from 'rollup-plugin-commonjs';
 export default {
   input: "index.js",
-  plugins: [resolve(), terser()],
+  plugins: [resolve(),
+  commonjs(), terser()],
   output: [
     {
       file: "dist/esm.js",

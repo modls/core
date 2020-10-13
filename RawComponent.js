@@ -9,4 +9,4 @@ export default class RawComponent extends Component {
     }
 }
 
-const { html, render } = lighterhtml(Component);
+const { render } = lighterhtml(Component);

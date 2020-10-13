@@ -14,7 +14,7 @@ class ExampleClass extends Component {
   constructor() {
     super(...arguments);
     this.state = {
-      number: 0
+      numbers: [0, 0]
     }
   }
   styles() {
@@ -26,27 +26,32 @@ class ExampleClass extends Component {
   }
   onDidMount() {
     console.log("Mounted");
-    this.setState({ number: this.props.startFrom });
+    let numbers = [...this.state.numbers];
+    numbers[0] = this.props.startFrom;
+    this.setState({ numbers });
   }
-  onAttributeChanged(oldProps, newProps) {
-    console.log(oldProps, newProps);
+  onDidUpdate(oldProps, oldState) {
+    console.log(this.state, oldState);
   }
   onWillUnmount() {
     console.log("Unmounted");
   }
   updateNumber(i) {
-    if (this.state.number === 10) {
+    if (this.state.numbers[0] === 10) {
       this.remove();
     } else {
-      this.setState({ number: this.state.number + 1 });
+
+      let numbers = [...this.state.numbers];
+      numbers[0] = this.state.numbers[0] + 1;
+      this.setState({ numbers });
     }
   }
   render() {
     return html`
-      Started from ${this.props.startFrom} <br />
-      <button onclick=${() => this.updateNumber(5)}>
-        Clicked ${this.state.number} times
-      </button>
+    Started from ${this.props.startFrom} <br />
+    <button onclick=${() => this.updateNumber(5)}>
+      Clicked ${this.state.numbers[0]} times
+    </button>
     `;
   }
 }
