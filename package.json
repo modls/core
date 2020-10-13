@@ -1,7 +1,7 @@
 {
   "name": "@modls/core",
   "description": "Modls pronounched as modules (former BaseWebComponent)",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "browser": "dist/bundle.js",
   "main": "index.js",
   "unpkg": "dist/esm.js",
